@@ -1,23 +1,16 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/notice.dart';
-import '../services/content_service.dart';
 
 class AddContentDialog extends StatefulWidget {
   const AddContentDialog({
     super.key,
-    required this.contentService,
-    required this.adminId,
     this.notice,
+    required this.onSubmit,
   });
 
-  final ContentService contentService;
-  final String adminId;
   final Notice? notice;
+  final ValueChanged<Notice> onSubmit;
 
   @override
   State<AddContentDialog> createState() => _AddContentDialogState();
@@ -29,7 +22,6 @@ class _AddContentDialogState extends State<AddContentDialog> {
   late final TextEditingController _descriptionController;
   late final TextEditingController _imageUrlController;
   late final TextEditingController _deviceIdsController;
-  bool _uploading = false;
 
   @override
   void initState() {
@@ -53,64 +45,21 @@ class _AddContentDialogState extends State<AddContentDialog> {
     super.dispose();
   }
 
-  Future<void> _uploadImage() async {
-    setState(() {
-      _uploading = true;
-    });
-    try {
-      final result = await FilePicker.platform.pickFiles(type: FileType.image);
-      if (result == null || result.files.isEmpty) {
-        return;
-      }
-      final file = result.files.single;
-
-      String? url;
-      if (kIsWeb) {
-        final bytes = file.bytes;
-        if (bytes == null) {
-          throw Exception('No file bytes received.');
-        }
-        url = await widget.contentService.uploadWebImage(
-          data: bytes,
-          adminId: widget.adminId,
-          fileName: file.name,
-        );
-      } else {
-        final path = file.path;
-        if (path == null) {
-          throw Exception('No file path received.');
-        }
-        url = await widget.contentService.uploadImage(
-          file: File(path),
-          adminId: widget.adminId,
-        );
-      }
-
-      if (!mounted) return;
-      setState(() {
-        _imageUrlController.text = url!;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Upload failed: $e')),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _uploading = false;
-        });
-      }
-    }
-  }
-
   void _submit() {
     if (_formKey.currentState?.validate() != true) {
       return;
     }
 
-    final notice = Notice(
-      id: widget.notice?.id ?? '',
+    final notice = (widget.notice ??
+            Notice(
+              id: '',
+              title: '',
+              description: '',
+              imageUrl: '',
+              deviceIds: const <String>[],
+              createdAt: DateTime.now(),
+            ))
+        .copyWith(
       title: _titleController.text.trim(),
       description: _descriptionController.text.trim(),
       imageUrl: _imageUrlController.text.trim(),
@@ -119,10 +68,10 @@ class _AddContentDialogState extends State<AddContentDialog> {
           .map((id) => id.trim())
           .where((id) => id.isNotEmpty)
           .toList(),
-      createdAt: widget.notice?.createdAt,
     );
 
-    Navigator.of(context).pop(notice);
+    widget.onSubmit(notice);
+    Navigator.of(context).pop();
   }
 
   @override
@@ -139,7 +88,7 @@ class _AddContentDialogState extends State<AddContentDialog> {
                 controller: _titleController,
                 decoration: const InputDecoration(labelText: 'Title'),
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.trim().isEmpty) {
                     return 'Enter a title';
                   }
                   return null;
@@ -151,7 +100,7 @@ class _AddContentDialogState extends State<AddContentDialog> {
                 decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.trim().isEmpty) {
                     return 'Enter a description';
                   }
                   return null;
@@ -162,27 +111,15 @@ class _AddContentDialogState extends State<AddContentDialog> {
                 controller: _deviceIdsController,
                 decoration: const InputDecoration(
                   labelText: 'Device IDs',
-                  helperText: 'Comma separated list of device identifiers',
+                  helperText: 'Comma separated list of displays to target',
                 ),
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _imageUrlController,
-                decoration: const InputDecoration(labelText: 'Image URL'),
-              ),
-              const SizedBox(height: 8),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton.icon(
-                  onPressed: _uploading ? null : _uploadImage,
-                  icon: _uploading
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.cloud_upload),
-                  label: const Text('Upload Image'),
+                decoration: const InputDecoration(
+                  labelText: 'Image URL (optional)',
+                  helperText: 'Paste a web image link to preview on the board',
                 ),
               ),
             ],
@@ -195,7 +132,7 @@ class _AddContentDialogState extends State<AddContentDialog> {
           child: const Text('Cancel'),
         ),
         FilledButton(
-          onPressed: _uploading ? null : _submit,
+          onPressed: _submit,
           child: const Text('Save'),
         ),
       ],

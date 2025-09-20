@@ -1,83 +1,52 @@
 # Smart Notice Board Admin Panel
 
-A Flutter-based admin panel that lets administrators manage notices, adverts, and posters that appear on Smart Notice Board devices. The panel integrates with Firebase for authentication, data storage, and media uploads.
+This repository contains a Flutter-only prototype of the Smart Notice Board admin experience. It focuses on the user interface and interaction design so you can explore the admin flow without setting up Firebase or any other backend services.
 
-## Features
+## Highlights
 
-- Firebase email/password authentication for admins.
-- Real-time list of notices stored in Cloud Firestore.
-- Create, update, and delete notices, including optional device targeting metadata.
-- Upload poster images to Firebase Storage from mobile, desktop, or web.
-- Material 3 interface optimized for tablets and phones.
+- 📋 **Notice management dashboard** – browse sample content in either a list or responsive grid view.
+- ➕ **Create & edit dialogs** – add new notices or tweak existing ones with a compact Material 3 form.
+- 🎯 **Device targeting chips** – quickly visualise which displays will receive a notice.
+- 🔐 **Mock authentication** – sign in with demo credentials (`admin@smartboard.app` / `password123`) to simulate an admin login.
 
 ## Project Structure
 
 ```
 lib/
-├── main.dart                 # App entry point and dependency setup
+├── main.dart                     # App entry point and provider wiring
 ├── models/
-│   └── notice.dart           # Firestore notice model
+│   └── notice.dart               # Lightweight notice model
 ├── providers/
-│   └── auth_provider.dart    # Firebase Auth state handling
+│   ├── auth_provider.dart        # Mock authentication state
+│   └── content_provider.dart     # In-memory notice catalogue
 ├── screens/
-│   ├── admin_panel_screen.dart # Main admin experience
-│   └── login_screen.dart       # Email/password sign-in screen
-├── services/
-│   └── content_service.dart  # Firestore and Storage helpers
+│   ├── admin_panel_screen.dart   # Dashboard UI with list/grid layouts
+│   └── login_screen.dart         # Email/password sign-in form
 └── widgets/
-    └── add_content_dialog.dart # Form for creating/updating notices
+    └── add_content_dialog.dart   # Modal used for creating or editing notices
 ```
 
 ## Getting Started
 
-1. **Install Flutter**
-   Make sure you have Flutter 3.10 or later installed and configured. Follow the [Flutter installation guide](https://docs.flutter.dev/get-started/install) if required.
-
-2. **Configure Firebase**
-   - Create a Firebase project from the [Firebase console](https://console.firebase.google.com/).
-   - Enable Email/Password authentication.
-   - Create a Firestore database (in production or test mode) and a Firebase Storage bucket.
-   - Register your Flutter app (Android, iOS, Web, etc.) and download the platform configuration files (`google-services.json`, `GoogleService-Info.plist`, or `firebase_options.dart`).
-   - If you prefer using the `firebase_options.dart` approach, run:
-     ```bash
-     flutterfire configure
-     ```
-     and import the generated `DefaultFirebaseOptions` inside `main.dart` before calling `Firebase.initializeApp`.
-
-3. **Install Dependencies**
-   From the repository root run:
+1. **Install Flutter** – Ensure Flutter 3.10 (or newer) is configured on your machine. Follow the [official installation guide](https://docs.flutter.dev/get-started/install) if needed.
+2. **Fetch packages** – From the repo root run:
    ```bash
    flutter pub get
    ```
-
-4. **Run the App**
-   Start the admin panel on an emulator or physical device:
+3. **Launch the prototype** –
    ```bash
    flutter run
    ```
+4. **Sign in** – When prompted, use the demo credentials above to unlock the admin panel. All data lives in memory, so restarting the app resets it.
 
-5. **Create an Admin User**
-   Use the Firebase console or a seed script to create an admin account. Once created, you can sign in through the app using the registered email and password.
+## Customising the UI
 
-## Firestore Data Model
-
-Each notice is stored in the `notices` collection with the following fields:
-
-| Field        | Type      | Description                                             |
-|--------------|-----------|---------------------------------------------------------|
-| `title`      | `String`  | Headline or name of the notice.                         |
-| `description`| `String`  | Supporting text or body of the notice.                  |
-| `imageUrl`   | `String`  | HTTPS URL of the poster image in Firebase Storage.      |
-| `deviceIds`  | `List`    | Optional array of device identifiers that should render the notice. |
-| `timestamp`  | `Timestamp` | Creation/update time, populated automatically.       |
+- Update the seed notices in `lib/providers/content_provider.dart` to match your project branding.
+- Tweak the layouts inside `lib/screens/admin_panel_screen.dart` to experiment with tablet/desktop breakpoints.
+- Expand the `Notice` model (`lib/models/notice.dart`) with additional fields such as schedules or tags, then surface them in the dialog and cards.
 
 ## Next Steps
 
-- Extend the notice model to support scheduling (start/end dates) or rich media (video, PDF).
-- Add granular roles/permissions if multiple administrators collaborate.
-- Integrate device management screens to control per-device playlists.
-- Wire push notifications or email alerts when new content is published.
+When you are ready to connect the UI to a backend (Firebase, REST API, Supabase, etc.), replace the mock providers with real data sources. The separation between models, providers, and widgets in this prototype should make that transition straightforward.
 
-## License
-
-This project is provided as starter code. Adapt and extend it to match your Smart Notice Board requirements.
+Happy building!

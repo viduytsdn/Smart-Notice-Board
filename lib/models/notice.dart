@@ -1,41 +1,35 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Notice {
-  Notice({
+  const Notice({
     required this.id,
     required this.title,
     required this.description,
     required this.imageUrl,
     required this.deviceIds,
-    this.createdAt,
+    required this.createdAt,
   });
-
-  factory Notice.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
-    final data = doc.data() ?? {};
-    return Notice(
-      id: doc.id,
-      title: data['title'] as String? ?? '',
-      description: data['description'] as String? ?? '',
-      imageUrl: data['imageUrl'] as String? ?? '',
-      deviceIds: List<String>.from(data['deviceIds'] as List<dynamic>? ?? []),
-      createdAt: data['timestamp'] as Timestamp?,
-    );
-  }
 
   final String id;
   final String title;
   final String description;
   final String imageUrl;
   final List<String> deviceIds;
-  final Timestamp? createdAt;
+  final DateTime createdAt;
 
-  Map<String, dynamic> toJson() {
-    return {
-      'title': title,
-      'description': description,
-      'imageUrl': imageUrl,
-      'deviceIds': deviceIds,
-      'timestamp': createdAt ?? FieldValue.serverTimestamp(),
-    };
+  Notice copyWith({
+    String? id,
+    String? title,
+    String? description,
+    String? imageUrl,
+    List<String>? deviceIds,
+    DateTime? createdAt,
+  }) {
+    return Notice(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      imageUrl: imageUrl ?? this.imageUrl,
+      deviceIds: deviceIds ?? this.deviceIds,
+      createdAt: createdAt ?? this.createdAt,
+    );
   }
 }

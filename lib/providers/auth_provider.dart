@@ -1,42 +1,43 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthProvider extends ChangeNotifier {
-  AuthProvider({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance {
-    _auth.userChanges().listen((user) {
-      _user = user;
-      notifyListeners();
-    });
-  }
+  static const _demoEmail = 'admin@smartboard.app';
+  static const _demoPassword = 'password123';
 
-  final FirebaseAuth _auth;
-  User? _user;
-  bool _loading = false;
+  bool _isAuthenticated = false;
+  bool _isLoading = false;
   String? _errorMessage;
 
-  User? get user => _user;
-  bool get isLoading => _loading;
+  bool get isAuthenticated => _isAuthenticated;
+  bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
   Future<void> signIn({required String email, required String password}) async {
     _setLoading(true);
-    try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+
+    if (email.trim().toLowerCase() == _demoEmail && password == _demoPassword) {
+      _isAuthenticated = true;
       _errorMessage = null;
-    } on FirebaseAuthException catch (e) {
-      _errorMessage = e.message;
-      rethrow;
-    } finally {
+    } else {
+      _errorMessage =
+          'Invalid email or password. Use $_demoEmail / $_demoPassword to continue.';
+      _isAuthenticated = false;
       _setLoading(false);
+      throw Exception(_errorMessage);
     }
+
+    _setLoading(false);
   }
 
-  Future<void> signOut() async {
-    await _auth.signOut();
+  void signOut() {
+    _isAuthenticated = false;
+    _errorMessage = null;
+    notifyListeners();
   }
 
   void _setLoading(bool value) {
-    _loading = value;
+    _isLoading = value;
     notifyListeners();
   }
 }
