@@ -1,0 +1,16 @@
+name: smart_notice_board_admin
+description: A Flutter admin panel for managing Smart Notice Board content.
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=2.19.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.0.3
+  uuid: ^3.0.7
+
+flutter:
+  uses-material-design: true
