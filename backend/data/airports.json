@@ -1,0 +1,19 @@
+[
+  { "code": "LHR", "name": "London Heathrow", "city": "London" },
+  { "code": "LGW", "name": "London Gatwick", "city": "London" },
+  { "code": "LCY", "name": "London City", "city": "London" },
+  { "code": "MAN", "name": "Manchester", "city": "Manchester" },
+  { "code": "EDI", "name": "Edinburgh", "city": "Edinburgh" },
+  { "code": "GLA", "name": "Glasgow", "city": "Glasgow" },
+  { "code": "BHD", "name": "Belfast City", "city": "Belfast" },
+  { "code": "BFS", "name": "Belfast International", "city": "Belfast" },
+  { "code": "BRS", "name": "Bristol", "city": "Bristol" },
+  { "code": "BHX", "name": "Birmingham", "city": "Birmingham" },
+  { "code": "NCL", "name": "Newcastle", "city": "Newcastle upon Tyne" },
+  { "code": "LPL", "name": "Liverpool John Lennon", "city": "Liverpool" },
+  { "code": "ABZ", "name": "Aberdeen", "city": "Aberdeen" },
+  { "code": "SOU", "name": "Southampton", "city": "Southampton" },
+  { "code": "CWL", "name": "Cardiff", "city": "Cardiff" },
+  { "code": "INV", "name": "Inverness", "city": "Inverness" },
+  { "code": "NWI", "name": "Norwich", "city": "Norwich" }
+]
