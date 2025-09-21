@@ -1,0 +1,28 @@
+{
+  "name": "smart-notice-uk-flights-api",
+  "version": "1.0.0",
+  "description": "REST API for a UK domestic flights fulfilment demo",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "lint": "node scripts/lint.js"
+  },
+  "keywords": [
+    "flights",
+    "uk",
+    "express",
+    "api"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
